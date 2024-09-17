@@ -38,12 +38,16 @@ namespace QQBotForCSharp
         public static string[] AnalyzeMessage(string msg)
         {
             ArrayList argv = new(msg.Split(' '));
-            foreach (string it in argv)
+            for (int i = 0; i < argv.Count; i++)
             {
-                if (it == "") argv.Remove(it);
+                if ((string)argv[i]! == "")
+                {
+                    argv.RemoveAt(i);
+                    i--;
+                }
             }
 
-            return (string[])argv.ToArray();
+            return (string[]) argv.ToArray(typeof(string));
         }
 
         public static async void OnGroupMessage(object? sender, GroupMessageEventArgs e)
