@@ -23,16 +23,16 @@ namespace QQBotForCSharp
 
     public class EarthQuakeInfo
     {
-        public int ID { get; set; }
-        public string EventID { get; set; }
-        public string ReportTime { get; set; }
-        public int ReportNum { get; set; }
-        public string OriginTime { get; set; }
-        public string HypoCenter { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public double Magunitude { get; set; }
-        public double MaxIntensity { get; set; }
+        public required int ID { get; set; }
+        public required string EventID { get; set; }
+        public required string ReportTime { get; set; }
+        public required int ReportNum { get; set; }
+        public required string OriginTime { get; set; }
+        public required string HypoCenter { get; set; }
+        public required double Latitude { get; set; }
+        public required double Longitude { get; set; }
+        public required double Magunitude { get; set; }
+        public required double MaxIntensity { get; set; }
     }
 }
 
@@ -50,12 +50,7 @@ namespace QQBotForCSharp
                 return;
             }
 
-            string tempMsg = string.Empty;
-
-            foreach (var s in msg.Skip(1))
-            {
-                tempMsg += " " + s;
-            }
+            var tempMsg = msg.Skip(1).Aggregate(string.Empty, (current, s) => current + (" " + s));
 
             await eventArgs.ReplyAsync(new TextSegment(tempMsg.Remove(0, 1)));
         }
@@ -63,20 +58,20 @@ namespace QQBotForCSharp
         public static async void RandomImage(string[] msg, GroupMessageEventArgs eventArgs)
         {
             var path = @"C:\Users\WhiteCAT\Pictures\useForBot";
+            if (path == null) throw new ArgumentNullException(nameof(path));
             try
             {
                 var files = Directory.GetFiles(path, "*.*", SearchOption.TopDirectoryOnly);
 
-                var random = new Random();
-                var index = random.Next(files.Length);
+                var index = new Random().Next(0, files.Length);
                 await eventArgs.ReplyAsync(new ImageSegment(files[index]));
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                await eventArgs.ReplyAsync(new TextSegment("I/O操作错误：\n" + e.Message));
             }
         }
-
 
         public static async void GetImgInternet(string[] msg, GroupMessageEventArgs eventArgs)
         {
@@ -87,7 +82,7 @@ namespace QQBotForCSharp
             try
             {
                 using HttpClient client = new();
-                HttpResponseMessage response = await client.GetAsync("https://api.wolfx.jp/img.php");
+                using var response = await client.GetAsync("https://api.wolfx.jp/img.php");
                 response.EnsureSuccessStatusCode();
 
                 // read file info
@@ -95,14 +90,12 @@ namespace QQBotForCSharp
 
                 // save file
                 var tempFilePath = imagePath + "\\" + Guid.NewGuid().ToString() + ".jpg";
-                using (FileStream fs = new FileStream(tempFilePath, FileMode.Create))
-                {
-                    fs.Write(imageBytes, 0, imageBytes.Length);
-                }
+                await using var fs = new FileStream(tempFilePath, FileMode.Create);
+                fs.Write(imageBytes, 0, imageBytes.Length);
 
                 await eventArgs.ReplyAsync(new ImageSegment(tempFilePath));
 
-                NetInfo.DeleteImage(tempFilePath);
+                NetInfo.DeleteImage(imagePath);
             }
             catch (IOException ioException)
             {
@@ -127,16 +120,21 @@ namespace QQBotForCSharp
 
             try
             {
-                using (HttpClient client = new())
+                using HttpClient client = new();
+                using var response = await client.GetAsync(getUrl);
+                response.EnsureSuccessStatusCode();
+
+                var jsonInfo = await response.Content.ReadAsStringAsync();
+
+                var info = JsonConvert.DeserializeObject<EarthQuakeInfo>(jsonInfo);
+
+                if (info == null)
                 {
-                    HttpResponseMessage response = await client.GetAsync(getUrl);
-                    response.EnsureSuccessStatusCode();
-
-                    var jsonInfo = await response.Content.ReadAsStringAsync();
-
-                    EarthQuakeInfo? info = JsonConvert.DeserializeObject<EarthQuakeInfo>(jsonInfo);
-
-                    var esInfo = "\n最近的一次地震: \n" + 
+                    await eventArgs.ReplyAsync(new TextSegment("获取报文失败!\nINFO结构体为NULL"));
+                }
+                else
+                {
+                    var esInfo = "\n最近的一次地震: \n" +
                                  $"EEW发报ID：{info.ID}\n" +
                                  $"EEW发报事件ID：{info.EventID}\n" +
                                  $"EEW发报时间：{info.ReportTime}\n" +

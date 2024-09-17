@@ -34,9 +34,9 @@ namespace QQBotForCSharp
             
             // Config OnMessage Event
             service.OnGroupMessage += QQBotMessage.OnGroupMessage;
-            // service.OnPrivateMessage
+            service.OnPrivateMessage += QQBotMessage.OnPrivateMessage;
 
-            var cts = new CancellationTokenSource();
+           var cts = new CancellationTokenSource();
             AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
             Console.CancelKeyPress += (sender, eventArgs) => cts.Cancel();
 
