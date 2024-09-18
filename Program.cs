@@ -6,6 +6,7 @@ using Makabaka.Services;
 using Newtonsoft.Json;
 using Serilog;
 using System.Runtime.Loader;
+ using Makabaka.Network;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -13,8 +14,11 @@ using QQBotForCSharp;
 
 namespace QQBotForCSharp
 {
-    internal class Program
+
+    public class Program
     {
+        public static IWebSocketService? Service;
+
         static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -30,28 +34,25 @@ namespace QQBotForCSharp
             config ??= new();
             await File.WriteAllTextAsync("config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
 
-            var service = ServiceFactory.CreateForwardWebSocketService(config);
+            Service = ServiceFactory.CreateForwardWebSocketService(config);
             
             // Config OnMessage Event
-            service.OnGroupMessage += QQBotMessage.OnGroupMessage;
-            service.OnPrivateMessage += QQBotMessage.OnPrivateMessage;
+            Service.OnGroupMessage += QQBotMessage.OnGroupMessage;
+            Service.OnPrivateMessage += QQBotMessage.OnPrivateMessage;
+            Service.OnGroupMemberIncrease += QQBotMessage.OnGroupMemberIncrease;
 
-           var cts = new CancellationTokenSource();
+          var cts = new CancellationTokenSource();
             AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
             Console.CancelKeyPress += (sender, eventArgs) => cts.Cancel();
 
-            await service.StartAsync();
+            await Service.StartAsync();
 
-            try
+            while (Console.ReadKey().Key != ConsoleKey.Escape)
             {
-                await Task.Delay(Timeout.Infinite, cts.Token);
-            }
-            catch (TaskCanceledException e)
-            {
-                Console.WriteLine(e);
+                Console.WriteLine("Stopping...");
+                await Service.StopAsync();
             }
 
-            await service.StopAsync();
         }
     }
 }

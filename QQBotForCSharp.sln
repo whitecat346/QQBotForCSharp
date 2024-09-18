@@ -5,6 +5,8 @@ VisualStudioVersion = 17.12.35209.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QQBotForCSharp", "QQBotForCSharp.csproj", "{4105BC8A-1DB8-494A-9067-1EDE156CD8A2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QQBotForCSharpTests", "..\QQBotForCSharpTests\QQBotForCSharpTests.csproj", "{9E3FDF5E-042A-494C-AAAE-9DC62BC735C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{4105BC8A-1DB8-494A-9067-1EDE156CD8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4105BC8A-1DB8-494A-9067-1EDE156CD8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4105BC8A-1DB8-494A-9067-1EDE156CD8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E3FDF5E-042A-494C-AAAE-9DC62BC735C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E3FDF5E-042A-494C-AAAE-9DC62BC735C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E3FDF5E-042A-494C-AAAE-9DC62BC735C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E3FDF5E-042A-494C-AAAE-9DC62BC735C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

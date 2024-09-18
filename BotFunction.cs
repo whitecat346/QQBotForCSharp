@@ -2,8 +2,10 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AtCode;
 using Newtonsoft.Json;
 using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
@@ -13,7 +15,7 @@ namespace QQBotForCSharp
 {
     public class NetInfo
     {
-        public static async void DeleteImage(string path)
+        public static void DeleteImage(string path)
         {
             Thread.Sleep(10000);
 
@@ -76,7 +78,7 @@ namespace QQBotForCSharp
         public static async void GetImgInternet(string[] msg, GroupMessageEventArgs eventArgs)
         {
             // Create Temp Image Path
-            var imagePath = Path.GetTempPath() + @"\BotImageTempFolder";
+            var imagePath = new string(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)) + @"\BotImageTempFolder";
             Directory.CreateDirectory(imagePath);
 
             try
@@ -89,10 +91,13 @@ namespace QQBotForCSharp
                 var imageBytes = await response.Content.ReadAsByteArrayAsync();
 
                 // save file
-                var tempFilePath = imagePath + "\\" + Guid.NewGuid().ToString() + ".jpg";
+                var tempFilePath = imagePath + "\\" + Guid.NewGuid() + ".jpg";
                 await using var fs = new FileStream(tempFilePath, FileMode.Create);
-                fs.Write(imageBytes, 0, imageBytes.Length);
+                {
+                    fs.Write( imageBytes, 0, imageBytes.Length );
+                }
 
+                Thread.Sleep(1000);
                 await eventArgs.ReplyAsync(new ImageSegment(tempFilePath));
 
                 NetInfo.DeleteImage(imagePath);
@@ -111,6 +116,11 @@ namespace QQBotForCSharp
             {
                 Console.WriteLine(e);
                 await eventArgs.ReplyAsync(new TextSegment("访问被拒绝：\n" + e.Message));
+            }
+            catch (Exception e) 
+            {
+                Console.WriteLine(e);
+                await eventArgs.ReplyAsync(new TextSegment("未知错误：\n" + e.Message));
             }
         }
 
@@ -158,7 +168,97 @@ namespace QQBotForCSharp
 
         public static async void Ban(string[] msg, GroupMessageEventArgs eventArgs)
         {
+            //var temp = msg.Skip(1).Aggregate(string.Empty, (current, s) => current + (s + " "));
+            //await eventArgs.ReplyAsync(new TextSegment(temp));
 
+            // style: #ban @sb. time
+            // time: 1d 1h 1m 1s
+
+            if (eventArgs.Sender.Role != "owner" || eventArgs.Sender.Role != "admin")
+            {
+                await eventArgs.ReplyAsync( new TextSegment( "权限不足！请提权！" ) );
+                return;
+            }
+
+            if (!SegmentMessage.IsCqCode( msg [1] ))
+            {
+                await eventArgs.ReplyAsync( new TextSegment( "请遵循正确的格式！" ) );
+                return;
+            }
+
+            var atInfo = JsonConvert.DeserializeObject<CodeInfo>(SegmentMessage.GetJObject( msg [1] ));
+            if (atInfo == null)
+            {
+                await eventArgs.ReplyAsync( new TextSegment( "序列化JSON时错误!" ) );
+                return;
+            }
+
+            if (msg.Length < 3)
+            {
+                await eventArgs.ReplyAsync(new TextSegment("请指定时间!"));
+                return;
+            }
+
+            var time = msg[2];
+
+            switch (time.Substring(time.Length - 1))
+            {
+                case "s":
+                    await Program.Service!.Contexts [0] .MuteGroupMemberAsync(
+                        eventArgs.GroupId,
+                        Convert.ToInt64( atInfo!.Data.QQ ),
+                        Convert.ToInt32( time.Remove( time.Length - 1 ) ));
+                    break;
+                case "m":
+                    await Program.Service!.Contexts [0] .MuteGroupMemberAsync(
+                        eventArgs.GroupId,
+                        Convert.ToInt64( atInfo!.Data.QQ ),
+                        Convert.ToInt32( time.Remove( time.Length - 1 ) ) * 60);
+                    break;
+                case "h":
+                    await Program.Service!.Contexts [0].MuteGroupMemberAsync(
+                        eventArgs.GroupId,
+                        Convert.ToInt64( atInfo!.Data.QQ ),
+                        Convert.ToInt32( time.Remove( time.Length - 1 ) ) * 60 * 60 );
+                    break;
+                case "d":
+                    await Program.Service!.Contexts [0] .MuteGroupMemberAsync(
+                        eventArgs.GroupId,
+                        Convert.ToInt64(atInfo!.Data.QQ ),
+                        Convert.ToInt32( time.Remove( time.Length - 1 ) ) * 60 * 60 * 24);
+                    break;
+                default:
+                    await eventArgs.ReplyAsync( new TextSegment( "请遵循正确的格式！" ) );
+                    break;
+            }
+        }
+
+        public static async void UnBan( string [ ] msg, GroupMessageEventArgs eventArgs )
+        {
+            if (eventArgs.Sender.Role != "owner" || eventArgs.Sender.Role != "admin")
+            {
+                await eventArgs.ReplyAsync( new TextSegment( "权限不足！请提权！" ) );
+                return;
+            }
+
+            if (!SegmentMessage.IsCqCode( msg [ 1 ] ))
+            {
+                await eventArgs.ReplyAsync(new TextSegment("请遵循正确的格式！"));
+                return;
+            }
+
+            var atInfo = JsonConvert.DeserializeObject<CodeInfo>(SegmentMessage.GetJObject( msg [ 1 ] ));
+            await Program.Service.Contexts [ 0 ] .UnmuteGroupMemberAsync( eventArgs.GroupId, 
+                Convert.ToInt64( atInfo.Data.QQ ) );
+        }
+
+        public static async void Help( string[] msg, GroupMessageEventArgs eventArgs )
+        {
+            var functionsMsg = QQBotMessage.Functions.Aggregate( string.Empty, ( current, item ) => current + (item.Key + " :\n\t" + QQBotMessage.FunctionDocument [item.Key] + "\n") );
+
+            string remove = functionsMsg.Remove( (functionsMsg.Length - 1), 1 );
+
+            await eventArgs.ReplyAsync( new TextSegment( "当前功能列表:\n" + remove) );
         }
     }
 }
