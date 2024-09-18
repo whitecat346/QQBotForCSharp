@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
 
@@ -20,7 +14,7 @@ namespace QQBotForCSharp
             public required Function Function { get; set; }
         }
 
-        public static Dictionary<string, string> FunctionDocument = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> FunctionDocumentDictionary = new()
         {
             { "#echo", "复读机 [复读内容]" },
             { "#randImg", "本地随机图片 [无参数]" },
@@ -28,8 +22,10 @@ namespace QQBotForCSharp
             { "#earthQuake", "最新地震 [无参数]" },
             { "#ban", "禁言[解禁用户(需要@对方)] [时间(格式为 1s 或 1m 或 1h 或 1d ；分别为 1秒 或 1分钟 或 1小时 或 1天，数字可更换)]" },
             { "#help", "帮助 [无参数]" },
-            { "#unban", "解禁 [解禁用户(需要@对方)]" }
+            { "#unban", "解禁 [解禁用户(需要@对方)]" },
+            { "#stopBot", "关闭Bot（只有Bot所有者可以使用）" }
         };
+        public static Dictionary<string, string> FunctionDocument = FunctionDocumentDictionary;
 
         public static Dictionary<string, FunctionInfo> InitDictionary()
         {
@@ -41,7 +37,8 @@ namespace QQBotForCSharp
                 { "#earthQuake", new FunctionInfo { IsEnable = true, Function = BotFunction.GetLatestEarthQuake } },
                 { "#ban", new FunctionInfo { IsEnable = true, Function = BotFunction.Ban } },
                 { "#help", new FunctionInfo { IsEnable = true, Function = BotFunction.Help } },
-                { "#unban", new FunctionInfo { IsEnable = true, Function = BotFunction.UnBan } }
+                { "#unban", new FunctionInfo { IsEnable = true, Function = BotFunction.UnBan } },
+                { "#stopBot", new FunctionInfo { IsEnable = true, Function = BotFunction.StopBot } }
             };
         }
 

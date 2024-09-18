@@ -1,15 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Formats.Asn1;
+using System.Net.Mime;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using AtCode;
 using Newtonsoft.Json;
 using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using Makabaka.Models.API.Requests;
 
 namespace QQBotForCSharp
 {
@@ -254,11 +249,44 @@ namespace QQBotForCSharp
 
         public static async void Help( string[] msg, GroupMessageEventArgs eventArgs )
         {
-            var functionsMsg = QQBotMessage.Functions.Aggregate( string.Empty, ( current, item ) => current + (item.Key + " :\n\t" + QQBotMessage.FunctionDocument [item.Key] + "\n") );
+            if (msg.Length > 1)
+            {
+                if (QQBotMessage.FunctionDocument.TryGetValue(msg[1], out var value))
+                {
+
+                    await eventArgs.ReplyAsync( [
+                        new AtSegment( eventArgs.UserId ), new TextSegment(
+                            value )
+                    ] );
+                    return;
+                }
+                else
+                {
+                    await eventArgs.ReplyAsync([new AtSegment(eventArgs.UserId), new TextSegment("指令不存在!")]);
+                    return;
+                }
+            }
+
+            var functionsMsg = QQBotMessage.Functions.Aggregate( string.Empty,
+                ( current, item ) => current + (item.Key + " :\n\t" + QQBotMessage.FunctionDocument [item.Key] + "\n") );
 
             string remove = functionsMsg.Remove( (functionsMsg.Length - 1), 1 );
 
             await eventArgs.ReplyAsync( new TextSegment( "当前功能列表:\n" + remove) );
+        }
+
+        public static async void StopBot( string [ ] msg, GroupMessageEventArgs eventArgs )
+        {
+            if (eventArgs.UserId == 2710458198)
+            {
+                await eventArgs.ReplyAsync( new TextSegment( "Bot即将关机!" ) );
+                await Program.Service!.StopAsync();
+                Environment.Exit( 0 );
+            }
+            else
+            {
+                await eventArgs.ReplyAsync( [new AtSegment( eventArgs.UserId ), new TextSegment( "你没有权限关机!" )] );
+            }
         }
     }
 }

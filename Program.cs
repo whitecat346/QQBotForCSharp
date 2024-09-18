@@ -27,9 +27,7 @@ namespace QQBotForCSharp
                 .CreateLogger();
             ForwardWebSocketServiceConfig? config = null;
             if (File.Exists("config.json"))
-            {
                 config = JsonConvert.DeserializeObject<ForwardWebSocketServiceConfig>(await File.ReadAllTextAsync("config.json"));
-            }
 
             config ??= new();
             await File.WriteAllTextAsync("config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
@@ -44,6 +42,8 @@ namespace QQBotForCSharp
           var cts = new CancellationTokenSource();
             AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
             Console.CancelKeyPress += (sender, eventArgs) => cts.Cancel();
+
+            Console.WriteLine( "WelCome to QQBotForCSharp!" );
 
             await Service.StartAsync();
 
