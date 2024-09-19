@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
+using QQBotForCSharp.Functions;
 
 namespace QQBotForCSharp
 {
@@ -8,11 +9,15 @@ namespace QQBotForCSharp
     {
         public delegate void Function(string[] msg, GroupMessageEventArgs e);
 
+        #region FunctionInfo
+
         public class FunctionInfo
         {
             public required bool IsEnable { get; set; }
             public required Function Function { get; set; }
         }
+
+        #endregion
 
         private static readonly Dictionary<string, string> FunctionDocumentDictionary = new()
         {
@@ -20,7 +25,7 @@ namespace QQBotForCSharp
             { "#randImg", "本地随机图片 [无参数]" },
             { "#netRandImg", "网络随机图片 [无参数]" },
             { "#earthQuake", "最新地震 [无参数]" },
-            { "#ban", "禁言[解禁用户(需要@对方)] [时间(格式为 1s 或 1m 或 1h 或 1d ；分别为 1秒 或 1分钟 或 1小时 或 1天，数字可更换)]" },
+            { "#ban", "禁言[禁言用户(需要@对方)] [时间(格式为 1s 或 1m 或 1h 或 1d ；分别为 1秒 或 1分钟 或 1小时 或 1天，数字可更换)]" },
             { "#help", "帮助 [无参数]" },
             { "#unban", "解禁 [解禁用户(需要@对方)]" },
             { "#stopBot", "关闭Bot（只有Bot所有者可以使用）" }
@@ -45,6 +50,8 @@ namespace QQBotForCSharp
         private static readonly Dictionary<string, FunctionInfo> TempDictionary = InitDictionary();
         public static Dictionary<string, FunctionInfo> Functions = TempDictionary;
 
+        #region AnalyzeMessage
+
         public static string[] AnalyzeMessage(string msg)
         {
             ArrayList argv = new(msg.Split(' '));
@@ -59,6 +66,8 @@ namespace QQBotForCSharp
 
             return (string[]) argv.ToArray(typeof(string));
         }
+
+        #endregion
 
         public static async void OnGroupMessage(object? sender, GroupMessageEventArgs e)
         {
