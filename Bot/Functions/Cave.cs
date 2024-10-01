@@ -16,7 +16,7 @@ namespace QQBotForCSharp.Functions
             return msg.Aggregate( string.Empty, ( current, s ) => current + ( " " + s ) );
         }
 
-        private static System.Timers.Timer _timer = new( 60000 );
+        private static System.Timers.Timer _timer = new( 10000 );
 
         public static async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
