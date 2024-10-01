@@ -1,5 +1,5 @@
-# Visual Studio 生成了具有 C++ 设置的 .editorconfig 文件。
 root = true
+# Visual Studio 生成了具有 C++ 设置的 .editorconfig 文件。
 
 [*.{c++,cc,cpp,cppm,cu,cuh,cxx,fx,h,h++,hh,hlsl,hpp,hxx,inl,ipp,ixx,tlh,tli}]
 
@@ -267,3 +267,67 @@ dotnet_style_prefer_collection_expression = when_types_loosely_match:suggestion
 dotnet_style_namespace_match_folder = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 dotnet_style_predefined_type_for_member_access = true:silent
+
+[*]
+
+# Microsoft .NET properties
+csharp_new_line_before_members_in_object_initializers = true
+csharp_preserve_single_line_blocks = true
+csharp_space_between_method_call_parameter_list_parentheses = true
+csharp_space_between_method_declaration_parameter_list_parentheses = true
+csharp_space_between_parentheses = control_flow_statements,expressions
+
+# ReSharper properties
+resharper_align_multiline_argument = true
+resharper_align_multiline_array_and_object_initializer = true
+resharper_align_multiline_binary_patterns = true
+resharper_align_multiline_calls_chain = true
+resharper_align_multiline_expression = true
+resharper_align_multiline_extends_list = true
+resharper_align_multiline_property_pattern = true
+resharper_align_multline_type_parameter_constrains = true
+resharper_align_multline_type_parameter_list = true
+resharper_align_tuple_components = true
+resharper_csharp_align_first_arg_by_paren = true
+resharper_csharp_align_multiline_parameter = true
+resharper_csharp_align_multiple_declaration = true
+resharper_csharp_empty_block_style = together_same_line
+resharper_csharp_insert_final_newline = true
+resharper_csharp_int_align_comments = true
+resharper_csharp_keep_blank_lines_in_declarations = 1
+resharper_csharp_keep_existing_enum_arrangement = false
+resharper_csharp_space_before_colon_in_case = true
+resharper_csharp_wrap_before_binary_opsign = true
+resharper_csharp_wrap_before_invocation_rpar = true
+resharper_csharp_wrap_chained_method_calls = chop_if_long
+resharper_csharp_wrap_parameters_style = chop_if_long
+resharper_indent_anonymous_method_block = true
+resharper_int_align_assignments = true
+resharper_int_align_fields = true
+resharper_int_align_methods = true
+resharper_int_align_nested_ternary = true
+resharper_int_align_parameters = true
+resharper_int_align_properties = true
+resharper_int_align_property_patterns = true
+resharper_int_align_switch_expressions = true
+resharper_int_align_switch_sections = true
+resharper_int_align_variables = true
+resharper_keep_existing_attribute_arrangement = true
+resharper_keep_existing_declaration_block_arrangement = false
+resharper_keep_existing_list_patterns_arrangement = false
+resharper_outdent_binary_ops = true
+resharper_outdent_binary_pattern_ops = true
+resharper_outdent_statement_labels = true
+resharper_place_field_attribute_on_same_line = if_owner_is_single_line
+resharper_place_simple_switch_expression_on_single_line = true
+resharper_space_within_checked_parentheses = true
+resharper_space_within_empty_braces = false
+resharper_space_within_list_pattern_brackets = true
+resharper_space_within_nameof_parentheses = true
+resharper_space_within_new_parentheses = true
+resharper_space_within_sizeof_parentheses = true
+resharper_space_within_typeof_parentheses = true
+resharper_space_within_type_parameter_angles = true
+resharper_wrap_before_eq = true
+resharper_wrap_chained_binary_expressions = chop_if_long
+resharper_wrap_switch_expression = chop_if_long

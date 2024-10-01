@@ -34,8 +34,9 @@ namespace QQBotForCSharp.BotException
                 totalString = subString;
             }
 
-            string quateStr = new string( ' ', 4 ) + new string( '~', totalString.Length - 1 ).Insert( ptrPos, "^" );
-            return totalString + "\n" + quateStr;
+            string quateStr = new string( ' ', 4 ) + new string( '~', (totalString.Length - 1) ).Insert( ptrPos, "^" );
+            string sapceStr = new string(' ', argv[0].Length + 1);
+            return $"{argv[0]} " + totalString + $"\n{sapceStr}" + quateStr;
         }
 
         private static string GetTruncatedString( string input, int outLength )
@@ -51,9 +52,11 @@ namespace QQBotForCSharp.BotException
             }
         }
 
+        #region NotUsed
+
         //public static string MakeQuate( ref string [ ] argv, int begin, int end = 0, int ptrPos = 0 )
         //{
-        //    #region NotUsed
+        //    
 
         //    //var spaceCount = 0;
         //    //for (int i = 0; i < begin; i++)
@@ -135,6 +138,8 @@ namespace QQBotForCSharp.BotException
 
         //    return new string( totalString + "\n" + quateStr );
         //}
+
+        #endregion
 
         public static string MakeExceptionInfo( ref string [ ] argv, ExceptionType type, int begin, int end = 0, int ptrPos = 0 )
         {
