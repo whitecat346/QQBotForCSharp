@@ -23,7 +23,10 @@ namespace QQBotForCSharp.Functions
                 { "#help", "帮助 [无参数]" },
                 { "#unban", "解禁 [解禁用户(需要@对方)]" },
                 { "#stopBot", "关闭Bot（只有Bot所有者可以使用）" },
-                { "testFunc", "测试功能" }
+                { "#testFunc", "测试功能" },
+                { "#cave", "盗版回声洞" },
+                { "#enable", "启用指定功能 " },
+                { "#disable", "禁用指定功能 " },
             };
 
         #endregion

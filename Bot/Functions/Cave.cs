@@ -16,7 +16,22 @@ namespace QQBotForCSharp.Functions
             return msg.Aggregate( string.Empty, ( current, s ) => current + ( " " + s ) );
         }
 
+        private static System.Timers.Timer _timer = new( 60000 );
+
         public static async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
+        {
+            if ( _timer.Enabled ) { return; }
+
+            GetCave( msg, eventArgs );
+            _timer.Enabled = true;
+            _timer.Elapsed += ( sender, e ) =>
+                              {
+                                  _timer.Enabled = false;
+                              };
+            _timer.Start();
+        }
+
+        public static async void GetCave( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             if ( msg.Length == 1 )
             {
@@ -45,9 +60,26 @@ namespace QQBotForCSharp.Functions
             switch ( msg [1] )
             {
                 case "add" :
+                    var contextInfo = MakeCaveContext( msg.Skip( 2 ).ToArray() );
+                    if ( SegmentMessage.IsCqCode( contextInfo ) )
+                    {
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " 禁止使用 CQ 代码形式的消息（图片，视频等）! " )
+                                                   ]
+                                                  );
+                        return;
+                    }
+
+                    if ( contextInfo == string.Empty )
+                    {
+                        await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 内容不能为空！" ) ]
+                                                  );
+                    }
+
                     await Program.CaveDb.Cave.AddAsync( new CaveDbStruct
                                                         {
-                                                            Context = MakeCaveContext( msg.Skip( 2 ).ToArray() ),
+                                                            Context = contextInfo,
                                                             Sender  = eventArgs.Sender.NickName,
                                                             ID      = Program.CaveDb.Cave.Count()
                                                         }
