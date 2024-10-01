@@ -20,15 +20,17 @@ namespace QQBotForCSharp.Functions
         {
             if ( msg.Length == 1 )
             {
-                var tableCount = Program.caveDb.Cave.Count();
+                var tableCount = Program.CaveDb.Cave.Count();
                 var caveAt     = Random.Shared.Next( 0, tableCount );
 
-                var caveInfo = Program.caveDb.Cave.Single( cave => cave.ID == caveAt );
+                var caveInfo = Program.CaveDb.Cave.Single( cave => cave.ID == caveAt );
 
                 var caveStr = $"""
-                               盗版回声洞(${caveAt}):
-                               ${caveInfo.Context}
-                               -- ${caveInfo.Sender}
+                               盗版回声洞({caveAt}):
+
+                               {caveInfo.Context}
+
+                               -- {caveInfo.Sender}
                                """;
 
                 await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
@@ -43,22 +45,29 @@ namespace QQBotForCSharp.Functions
             switch ( msg [1] )
             {
                 case "add" :
-                    await Program.caveDb.Cave.AddAsync( new CaveDbStruct
+                    await Program.CaveDb.Cave.AddAsync( new CaveDbStruct
                                                         {
                                                             Context = MakeCaveContext( msg.Skip( 2 ).ToArray() ),
                                                             Sender  = eventArgs.Sender.NickName,
-                                                            ID      = Program.caveDb.Cave.Count()
+                                                            ID      = Program.CaveDb.Cave.Count()
                                                         }
                                                       );
-                    await Program.caveDb.SaveChangesAsync();
+                    await Program.CaveDb.SaveChangesAsync();
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 已添加至回声洞数据库!" ) ]
+                                              );
                     break;
                 case "del" :
-                    var caveId = msg [3];
+                    var caveId = msg [2];
                     if ( int.TryParse( caveId, out int caveIdResult ) )
                     {
-                        var waitToRemove = Program.caveDb.Cave.Single( c => c.ID == caveIdResult );
-                        Program.caveDb.Cave.Remove( waitToRemove );
-                        await Program.caveDb.SaveChangesAsync();
+                        var waitToRemove = Program.CaveDb.Cave.Single( c => c.ID == caveIdResult );
+                        Program.CaveDb.Cave.Remove( waitToRemove );
+                        await Program.CaveDb.SaveChangesAsync();
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " 已从回声洞数据库中删除!" )
+                                                   ]
+                                                  );
                     }
                     else
                     {

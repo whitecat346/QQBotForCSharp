@@ -11,8 +11,15 @@
 
   <ItemGroup>
     <Compile Remove="BotException\**" />
+    <Compile Remove="新文件夹\**" />
     <EmbeddedResource Remove="BotException\**" />
+    <EmbeddedResource Remove="新文件夹\**" />
     <None Remove="BotException\**" />
+    <None Remove="新文件夹\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="DataBase\CaveDbContext.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,12 +29,11 @@
   <ItemGroup>
     <PackageReference Include="Makabaka" Version="1.2.1.2" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -35,10 +41,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Serilog" Version="4.0.2" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="新文件夹\" />
+    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3" Version="2.1.10" />
   </ItemGroup>
 
   <ItemGroup>

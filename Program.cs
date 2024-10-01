@@ -7,7 +7,7 @@ namespace QQBotForCSharp
     public class Program
     {
         public static IWebSocketService? Service;
-        public static CaveDbContext      caveDb = new();
+        public static CaveContext        CaveDb = new();
 
         public static async Task Main( string [ ] args )
         {
@@ -21,7 +21,7 @@ namespace QQBotForCSharp
                 await Service.StopAsync();
             }
 
-            await caveDb.DisposeAsync();
+            await CaveDb.DisposeAsync();
         }
     }
 }

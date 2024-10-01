@@ -37,7 +37,7 @@ namespace QQBotForCSharp.Bot
                        { "#testFunc", new FunctionInfo { IsEnable = true, Function = BotFunctions.TestFunc } },
                        { "#enable", new FunctionInfo { IsEnable   = true, Function = BotFunctions.Enable } },
                        { "#disable", new FunctionInfo { IsEnable  = true, Function = BotFunctions.Disable } },
-                       { "cave", new FunctionInfo { IsEnable      = true, Function = BotFunctions.Cave } }
+                       { "#cave", new FunctionInfo { IsEnable     = true, Function = BotFunctions.Cave } }
                    };
         }
 
