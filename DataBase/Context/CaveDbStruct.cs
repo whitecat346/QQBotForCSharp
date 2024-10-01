@@ -15,14 +15,14 @@ namespace QQBotForCSharp.DataBase.Context
         [Key]
         [Required]
         [Column( TypeName = "INTEGER" )]
-        public long ID { get; set; }
+        public required long ID { get; set; }
 
         [Required]
         [Column( TypeName = "TEXT" )]
-        public string Sender { get; set; }
+        public required string Sender { get; set; }
 
         [Required]
         [Column( TypeName = "TEXT" )]
-        public string Context { get; set; }
+        public required string Context { get; set; }
     }
 }

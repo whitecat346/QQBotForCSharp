@@ -19,7 +19,7 @@ public partial class CaveContext : DbContext
     }
 
     protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder ) =>
-        optionsBuilder.UseSqlite( "Filename=Cave.db" );
+        optionsBuilder.UseSqlite( "Filename=G:\\QQBotForCSharp\\Cave.db" );
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
