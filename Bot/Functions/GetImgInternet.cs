@@ -1,11 +1,6 @@
 ﻿using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {

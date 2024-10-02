@@ -11,6 +11,9 @@ namespace QQBotForCSharp.Functions
             {
                 await eventArgs.ReplyAsync( new TextSegment( "Bot即将关机!" ) );
                 await Program.Service!.StopAsync();
+
+                BotQuit.SaveBotState();
+
                 Environment.Exit( 0 );
             }
             else

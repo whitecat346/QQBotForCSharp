@@ -1,8 +1,5 @@
-﻿using System.Reflection;
-using AtCode;
-using Makabaka.Models.EventArgs;
+﻿using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using Newtonsoft.Json;
 
 namespace QQBotForCSharp.Functions;
 
@@ -17,31 +14,24 @@ public partial class BotFunctions
         public required bool IsEnable { set; get; }
     }
 
-    internal readonly Dictionary<string, FuncPtrInfo>? FuncPtrInfos;
+    internal Dictionary<string, FuncPtrInfo> FuncPtrInfos;
 
-    public BotFunctions( Dictionary<string, FuncPtrInfo>? funcPtrInfo = null )
+    public BotFunctions()
     {
-        if ( funcPtrInfo is null )
-        {
-            FuncPtrInfos = new Dictionary<string, FuncPtrInfo>
-                           {
-                               { "#echo", new FuncPtrInfo { IsEnable       = true, Func = this.Echo } },
-                               { "#randImg", new FuncPtrInfo { IsEnable    = true, Func = this.RandomImage } },
-                               { "#netRandImg", new FuncPtrInfo { IsEnable = true, Func = this.GetImgInternet } },
-                               { "#earthQuake", new FuncPtrInfo { IsEnable = true, Func = this.GetLatestEarthQuake } },
-                               { "#ban", new FuncPtrInfo { IsEnable        = true, Func = this.Ban } },
-                               { "#help", new FuncPtrInfo { IsEnable       = true, Func = this.Help } },
-                               { "#unban", new FuncPtrInfo { IsEnable      = true, Func = this.UnBan } },
-                               { "#stopBot", new FuncPtrInfo { IsEnable    = true, Func = this.StopBot } },
-                               { "#enable", new FuncPtrInfo { IsEnable     = true, Func = this.Enable } },
-                               { "#disable", new FuncPtrInfo { IsEnable    = true, Func = this.Disable } },
-                               { "#cave", new FuncPtrInfo { IsEnable       = true, Func = this.Cave } }
-                           };
-        }
-        else
-        {
-            FuncPtrInfos = funcPtrInfo;
-        }
+        FuncPtrInfos = new Dictionary<string, FuncPtrInfo>
+                       {
+                           { "#echo", new FuncPtrInfo { IsEnable       = true, Func = this.Echo } },
+                           { "#randImg", new FuncPtrInfo { IsEnable    = true, Func = this.RandomImage } },
+                           { "#netRandImg", new FuncPtrInfo { IsEnable = true, Func = this.GetImgInternet } },
+                           { "#earthQuake", new FuncPtrInfo { IsEnable = true, Func = this.GetLatestEarthQuake } },
+                           { "#ban", new FuncPtrInfo { IsEnable        = true, Func = this.Ban } },
+                           { "#help", new FuncPtrInfo { IsEnable       = true, Func = this.Help } },
+                           { "#unban", new FuncPtrInfo { IsEnable      = true, Func = this.UnBan } },
+                           { "#stopBot", new FuncPtrInfo { IsEnable    = true, Func = this.StopBot } },
+                           { "#enable", new FuncPtrInfo { IsEnable     = true, Func = this.Enable } },
+                           { "#disable", new FuncPtrInfo { IsEnable    = true, Func = this.Disable } },
+                           { "#cave", new FuncPtrInfo { IsEnable       = true, Func = this.Cave } }
+                       };
     }
 
     public async void InvokeFuncPtr( string [ ] msg, GroupMessageEventArgs eventArgs )
@@ -60,13 +50,15 @@ public partial class BotFunctions
 
     public bool SetFuncState( string funcName, bool enable )
     {
-        if ( FuncPtrInfos.TryGetValue( funcName, out FuncPtrInfo funcPtrInfo ) )
+        if ( FuncPtrInfos.TryGetValue( funcName, out FuncPtrInfo _ ) )
         {
-            funcPtrInfo.IsEnable = enable;
+            var tempDic = FuncPtrInfos [funcName];
+            tempDic.IsEnable        = enable;
+            FuncPtrInfos [funcName] = tempDic;
         }
         else
         {
-            return false;
+            throw new Exception( "未找到该功能!" );
         }
 
         return true;

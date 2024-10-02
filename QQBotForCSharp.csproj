@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Bot\GroupManagerData.cs" />
     <Compile Remove="DataBase\CaveDbContext.cs" />
   </ItemGroup>
 

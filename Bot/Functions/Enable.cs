@@ -16,18 +16,30 @@ namespace QQBotForCSharp.Functions
             if ( msg [1] == "enable" || msg [1] == "disable" )
                 await eventArgs.ReplyAsync( new TextSegment( "不可对enable或disable方法进行启用或禁用操作！" ) );
 
-            if ( QqBotMessage.Functions.TryGetValue( msg [1], out var value ) )
+            if ( this.FuncPtrInfos.TryGetValue( msg [1], out var value ) )
             {
-                if ( value.IsEnable != true )
-                {
-                    value.IsEnable = true;
-                }
+                if ( value.IsEnable == true )
+                    await eventArgs.ReplyAsync( [
+                                                   new AtSegment( eventArgs.UserId ),
+                                                   new TextSegment( $"功能 {msg [1]} 已经启用！" )
+                                               ]
+                                              );
                 else
-                    await eventArgs.ReplyAsync( new TextSegment( $"功能 ${msg [1]} 已经启用！" ) );
+                {
+                    var temFuncPtrInfo = this.FuncPtrInfos [msg [1]];
+                    temFuncPtrInfo.IsEnable     = true;
+                    this.FuncPtrInfos [msg [1]] = temFuncPtrInfo;
+
+                    await eventArgs.ReplyAsync( [
+                                                   new AtSegment( eventArgs.UserId ),
+                                                   new TextSegment( $" 功能 {msg [1]} 已启用！" )
+                                               ]
+                                              );
+                }
             }
             else
             {
-                await eventArgs.ReplyAsync( new TextSegment( $"功能 ${msg [1]} 未找到！" ) );
+                await eventArgs.ReplyAsync( new TextSegment( $"功能 {msg [1]} 未找到！" ) );
             }
         }
     }

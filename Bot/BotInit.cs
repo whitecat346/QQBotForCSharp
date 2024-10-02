@@ -2,52 +2,81 @@
 using Makabaka.Configurations;
 using Makabaka.Services;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using QQBotForCSharp.Bot;
 using QQBotForCSharp.Functions;
 using Serilog;
 
-namespace QQBotForCSharp
+namespace QQBotForCSharp;
+
+public static class BotInit
 {
-    public static class BotInit
+    public static Dictionary<long, BotFunctions> GroupBotFunctions = new();
+
+    public static void GroupManagerInit()
     {
-        public static Dictionary<long, BotFunctions> GroupBotFunctions =
-            new() { { 879243827, new BotFunctions() } };
-
-        public static void GroupManagerInit()
+        if ( File.Exists( "groupManager.json" ) )
         {
-            if ( File.Exists( "groupManager.json" ) ) {}
+            var groupManager = JArray.Parse( File.ReadAllText( "groupManager.json" ) );
+            foreach ( var valuePair in groupManager )
+            {
+                var     tempBotFunctions = new BotFunctions();
+                JObject info             = (JObject)valuePair;
+                JObject funcInfo         = (JObject)info ["funcInfo"];
+                long    groupId          = (long)info ["groupId"];
+
+                foreach ( string funcName in BotFunctionsInfo.AllFunctionNameList )
+                {
+                    if ( funcInfo.TryGetValue( funcName, out var funcInfoValue ) )
+                    {
+                        tempBotFunctions.SetFuncState( funcName, (bool)funcInfoValue );
+                    }
+                    else
+                    {
+                        throw new Exception( "未找到该功能!" );
+                    }
+                }
+
+                GroupBotFunctions.Add( groupId, tempBotFunctions );
+            }
+
+            Console.WriteLine( "Loaded!" );
         }
+    }
 
-        public static async Task InitBot()
-        {
-            // Initialize Logger
-            Log.Logger = new LoggerConfiguration()
-                         .MinimumLevel.Verbose()
-                         .WriteTo.Console()
-                         .CreateLogger();
+    public static async Task InitBot()
+    {
+        // Initialize Logger
+        Log.Logger = new LoggerConfiguration()
+                     .MinimumLevel.Verbose()
+                     .WriteTo.Console()
+                     .CreateLogger();
 
-            // Config Service
-            ForwardWebSocketServiceConfig? config = null;
-            if ( File.Exists( "config.json" ) )
-                config
-                    = JsonConvert
-                        .DeserializeObject<ForwardWebSocketServiceConfig>( await File.ReadAllTextAsync( "config.json" )
-                                                                         );
+        // Config Service
+        ForwardWebSocketServiceConfig? config = null;
+        if ( File.Exists( "config.json" ) )
+            config
+                = JsonConvert
+                    .DeserializeObject<ForwardWebSocketServiceConfig>( await File.ReadAllTextAsync( "config.json" )
+                                                                     );
 
-            config ??= new();
-            await File.WriteAllTextAsync( "config.json", JsonConvert.SerializeObject( config, Formatting.Indented ) );
+        config ??= new();
+        await File.WriteAllTextAsync( "config.json", JsonConvert.SerializeObject( config, Formatting.Indented ) );
 
-            Program.Service = ServiceFactory.CreateForwardWebSocketService( config );
+        Program.Service = ServiceFactory.CreateForwardWebSocketService( config );
 
-            // Config OnMessage Event
-            Program.Service.OnGroupMessage        += QqBotMessage.OnGroupMessage;
-            //Program.Service.OnPrivateMessage      += QqBotMessage.OnPrivateMessage;
-            Program.Service.OnGroupMemberIncrease += QqBotMessage.OnGroupMemberIncrease;
+        // Config OnMessage Event
+        Program.Service.OnGroupMessage += QqBotMessage.OnGroupMessage;
+        //Program.Service.OnPrivateMessage      += QqBotMessage.OnPrivateMessage;
+        Program.Service.OnGroupMemberIncrease += QqBotMessage.OnGroupMemberIncrease;
 
-            var cts = new CancellationTokenSource();
-            AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
-            Console.CancelKeyPress                += ( sender, eventArgs ) => cts.Cancel();
+        var cts = new CancellationTokenSource();
+        AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
+        Console.CancelKeyPress                += ( sender, eventArgs ) => cts.Cancel();
 
-            await Program.Service.StartAsync();
-        }
+
+        GroupManagerInit();
+
+        await Program.Service.StartAsync();
     }
 }

@@ -28,9 +28,6 @@ namespace QQBotForCSharp
 
         #endregion
 
-        public static Dictionary<long, BotFunctions> GroupBotFunctions =
-            new() { { 879243827, new BotFunctions() } };
-
         public static async void OnGroupMessage( object? sender, GroupMessageEventArgs e )
         {
             var tempMsg = e.Message.ToString();
@@ -38,13 +35,15 @@ namespace QQBotForCSharp
             if ( tempMsg [0] != '#' ) return;
             var argv = AnalyzeMessage( e.Message.ToString() );
 
-            if ( GroupBotFunctions.TryGetValue( e.GroupId, out var botFunction ) )
+            if ( BotInit.GroupBotFunctions.TryGetValue( e.GroupId, out var botFunction ) )
             {
                 botFunction.InvokeFuncPtr( argv, e );
             }
             else
             {
-                GroupBotFunctions.Add( e.GroupId, new BotFunctions() );
+                BotInit.GroupBotFunctions.Add( e.GroupId, new BotFunctions() );
+
+                BotInit.GroupBotFunctions [e.GroupId].InvokeFuncPtr( argv, e );
             }
         }
 

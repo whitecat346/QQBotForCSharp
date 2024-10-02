@@ -11,25 +11,31 @@ public partial class BotFunctions
         return msg.Aggregate( string.Empty, ( current, s ) => current + ( " " + s ) );
     }
 
-    private static readonly System.Timers.Timer Timer = new( 10000 );
+    private readonly System.Timers.Timer _timer = new( 10000 );
 
     public async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
         if ( msg.Length != 1 && msg [1] == "del" )
             await GetCave( msg, eventArgs );
 
-        if ( Timer.Enabled ) { return; }
+        if ( _timer.Enabled )
+        {
+#if DEBUG
+            await eventArgs.ReplyAsync( new TextSegment( "Cave冷却中，请稍后再试！" ) );
+#endif
+            return;
+        }
         else await GetCave( msg, eventArgs );
 
-        Timer.Enabled = true;
-        Timer.Elapsed += ( sender, e ) =>
-                         {
-                             Timer.Enabled = false;
-                         };
-        Timer.Start();
+        _timer.Enabled = true;
+        _timer.Elapsed += ( sender, e ) =>
+                          {
+                              _timer.Enabled = false;
+                          };
+        _timer.Start();
     }
 
-    public static async Task GetCave( string [ ] msg, GroupMessageEventArgs eventArgs )
+    private async Task GetCave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
         switch ( msg.Length )
         {

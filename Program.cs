@@ -21,6 +21,8 @@ namespace QQBotForCSharp
             }
 
             await CaveDb.DisposeAsync();
+
+            BotQuit.SaveBotState();
         }
     }
 }
