@@ -57,4 +57,30 @@ public partial class BotFunctions
             await eventArgs.ReplyAsync( new TextSegment( "指令不存在!" ) );
         }
     }
+
+    public bool SetFuncState( string funcName, bool enable )
+    {
+        if ( FuncPtrInfos.TryGetValue( funcName, out FuncPtrInfo funcPtrInfo ) )
+        {
+            funcPtrInfo.IsEnable = enable;
+        }
+        else
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool GetFuncState( string funcName )
+    {
+        if ( FuncPtrInfos.TryGetValue( funcName, out FuncPtrInfo info ) )
+        {
+            return info.IsEnable;
+        }
+        else
+        {
+            throw new Exception( "未找到该功能!" );
+        }
+    }
 }
