@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Makabaka.Models.EventArgs;
+﻿using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using QQBotForCSharp.Bot;
 
 namespace QQBotForCSharp.Functions
 {
     public partial class BotFunctions
     {
-        public static async void Disable( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void Disable( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             if ( eventArgs.UserId != 2710458198 )
                 await eventArgs.ReplyAsync( new TextSegment( "非所有者禁止使用！" ) );

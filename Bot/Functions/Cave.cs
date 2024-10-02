@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Makabaka.Models.EventArgs;
+﻿using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using QQBotForCSharp;
 using QQBotForCSharp.DataBase.Context;
 
 namespace QQBotForCSharp.Functions;
 
-public static partial class BotFunctions
+public partial class BotFunctions
 {
     private static string MakeCaveContext( string [ ] msg )
     {
@@ -19,7 +13,7 @@ public static partial class BotFunctions
 
     private static readonly System.Timers.Timer Timer = new( 10000 );
 
-    public static async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
+    public async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
         if ( msg.Length != 1 && msg [1] == "del" )
             await GetCave( msg, eventArgs );

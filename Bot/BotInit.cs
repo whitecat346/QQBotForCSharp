@@ -1,13 +1,22 @@
-﻿using Makabaka.Configurations;
+﻿using System.Runtime.Loader;
+using Makabaka.Configurations;
 using Makabaka.Services;
 using Newtonsoft.Json;
+using QQBotForCSharp.Functions;
 using Serilog;
-using System.Runtime.Loader;
 
-namespace QQBotForCSharp.Bot
+namespace QQBotForCSharp
 {
     public static class BotInit
     {
+        public static Dictionary<long, BotFunctions> GroupBotFunctions =
+            new() { { 879243827, new BotFunctions() } };
+
+        public static void GroupManagerInit()
+        {
+            if ( File.Exists( "groupManager.json" ) ) {}
+        }
+
         public static async Task InitBot()
         {
             // Initialize Logger
@@ -31,7 +40,7 @@ namespace QQBotForCSharp.Bot
 
             // Config OnMessage Event
             Program.Service.OnGroupMessage        += QqBotMessage.OnGroupMessage;
-            Program.Service.OnPrivateMessage      += QqBotMessage.OnPrivateMessage;
+            //Program.Service.OnPrivateMessage      += QqBotMessage.OnPrivateMessage;
             Program.Service.OnGroupMemberIncrease += QqBotMessage.OnGroupMemberIncrease;
 
             var cts = new CancellationTokenSource();

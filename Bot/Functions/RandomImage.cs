@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void RandomImage( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void RandomImage( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             var path = @"C:\Users\WhiteCAT\Pictures\useForBot";
             if ( path == null ) throw new ArgumentNullException( nameof( path ) );

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void GetImgInternet( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void GetImgInternet( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             // Create Temp Image Path
             var imagePath = new string( Path.GetDirectoryName( Assembly.GetExecutingAssembly().Location ) )

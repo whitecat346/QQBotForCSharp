@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void UnBan( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void UnBan( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             if ( eventArgs.Sender.Role != "owner" || eventArgs.Sender.Role != "admin" )
             {

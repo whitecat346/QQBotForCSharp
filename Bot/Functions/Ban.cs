@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void Ban( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void Ban( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             //var temp = msg.Skip(1).Aggregate(string.Empty, (current, s) => current + (s + " "));
             //await eventArgs.ReplyAsync(new TextSegment(temp));

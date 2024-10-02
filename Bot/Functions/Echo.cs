@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void Echo( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void Echo( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             // #echo info
 

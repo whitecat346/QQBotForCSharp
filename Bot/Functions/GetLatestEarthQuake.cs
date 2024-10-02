@@ -24,7 +24,7 @@ namespace QQBotForCSharp.Functions
 {
     public partial class BotFunctions
     {
-        public static async void GetLatestEarthQuake( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void GetLatestEarthQuake( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             var getUrl = "https://api.wolfx.jp/sc_eew.json";
 

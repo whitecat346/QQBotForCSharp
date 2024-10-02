@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Makabaka.Models.EventArgs;
+﻿using Makabaka.Models.EventArgs;
 using Makabaka.Models.Messages;
-using QQBotForCSharp.Bot;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
         #region FunctionDocument
 
@@ -31,7 +25,7 @@ namespace QQBotForCSharp.Functions
 
         #endregion
 
-        public static async void Help( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void Help( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             if ( msg.Length > 1 )
             {
@@ -52,14 +46,14 @@ namespace QQBotForCSharp.Functions
                 }
             }
 
-            var functionsMsg = QqBotMessage.Functions.Aggregate( string.Empty,
-                                                                 ( current, item ) =>
-                                                                     current
-                                                                   + ( item.Key
-                                                                     + " :\n\t"
-                                                                     + FunctionDocumentDictionary [item.Key]
-                                                                     + "\n" )
-                                                               );
+            var functionsMsg = this.FuncPtrInfos.Aggregate( string.Empty,
+                                                            ( current, item ) =>
+                                                                current
+                                                              + ( item.Key
+                                                                + " :\n\t"
+                                                                + FunctionDocumentDictionary [item.Key]
+                                                                + "\n" )
+                                                          );
 
             string remove = functionsMsg.Remove( ( functionsMsg.Length - 1 ), 1 );
 

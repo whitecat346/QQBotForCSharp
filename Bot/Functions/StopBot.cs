@@ -3,9 +3,9 @@ using Makabaka.Models.Messages;
 
 namespace QQBotForCSharp.Functions
 {
-    public static partial class BotFunctions
+    public partial class BotFunctions
     {
-        public static async void StopBot( string [ ] msg, GroupMessageEventArgs eventArgs )
+        public async void StopBot( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
             if ( eventArgs.UserId == 2710458198 )
             {
