@@ -15,17 +15,21 @@ public partial class BotFunctions
 
     public async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
-        if ( msg.Length != 1 && msg [1] == "del" )
-            await GetCave( msg, eventArgs );
-
-        if ( _timer.Enabled )
+        if ( msg.Length != 1 && msg [1] == "del" || msg [1] == "count" )
         {
-#if DEBUG
-            await eventArgs.ReplyAsync( new TextSegment( "Cave冷却中，请稍后再试！" ) );
-#endif
-            return;
+            await GetCave( msg, eventArgs );
         }
-        else await GetCave( msg, eventArgs );
+        else
+        {
+            if ( _timer.Enabled )
+            {
+#if DEBUG
+                await eventArgs.ReplyAsync( new TextSegment( "Cave冷却中，请稍后再试！" ) );
+#endif
+                return;
+            }
+            else await GetCave( msg, eventArgs );
+        }
 
         _timer.Enabled = true;
         _timer.Elapsed += ( sender, e ) =>
@@ -37,35 +41,41 @@ public partial class BotFunctions
 
     private async Task GetCave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
-        switch ( msg.Length )
+        if ( msg.Length == 1 )
         {
-            case 1 :
-            {
-                var tableCount = Program.CaveDb.Cave.Count();
-                var caveAt     = Random.Shared.Next( 0, tableCount );
+            var tableCount = Program.CaveDb.Cave.Count();
+            var caveAt     = Random.Shared.Next( 0, tableCount );
 
-                var caveInfo = Program.CaveDb.Cave.Single( cave => cave.ID == caveAt );
+            var caveInfo = Program.CaveDb.Cave.Single( cave => cave.ID == caveAt );
 
-                var caveStr = $"""
-                               盗版回声洞({caveAt}):
+            var caveStr = $"""
+                           盗版回声洞({caveAt}):
 
-                               {caveInfo.Context}
+                           {caveInfo.Context}
 
-                               -- {caveInfo.Sender}
-                               """;
+                           -- {caveInfo.Sender}
+                           """;
 
-                await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
-                return;
-            }
+            await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
+            return;
 
-            case 2 : // form error
-                await eventArgs.ReplyAsync( new TextSegment( "格式错误！" ) );
-                break;
+            //case 2 : // form error
+            //{
+            //    await eventArgs.ReplyAsync( new TextSegment( "格式错误！" ) );
+            //    return;
+            //}
         }
 
         switch ( msg [1] )
         {
             case "add" :
+            {
+                if ( msg.Length < 3 )
+                {
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( "  格式错误！" ) ] );
+                    return;
+                }
+
                 var contextInfo = MakeCaveContext( msg.Skip( 2 ).ToArray() );
                 if ( SegmentMessage.IsCqCode( contextInfo ) )
                 {
@@ -96,8 +106,16 @@ public partial class BotFunctions
                 await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 已添加至回声洞数据库!" ) ]
                                           );
                 break;
+            }
 
             case "del" :
+            {
+                if ( msg.Length < 3 )
+                {
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 格式错误！" ) ] );
+                    return;
+                }
+
                 var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdResult ) ) // not a number
                 {
@@ -125,9 +143,16 @@ public partial class BotFunctions
                 }
 
                 break;
+            }
 
             case "at" :
-                caveId = msg [2];
+            {
+                if ( msg.Length < 3 )
+                {
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 格式错误！" ) ] );
+                }
+
+                var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdInt ) ) // not a number
                 {
                     if ( caveIdInt >= Program.CaveDb.Cave.Count() ) // out of range
@@ -153,6 +178,24 @@ public partial class BotFunctions
                 }
 
                 break;
+            }
+
+            case "count" :
+            {
+                if ( msg.Length > 2 )
+                {
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 包含多余参数！" ) ] );
+                    return;
+                }
+
+                var tableCount = Program.CaveDb.Cave.Count();
+                await eventArgs.ReplyAsync( [
+                                               new AtSegment( eventArgs.UserId ),
+                                               new TextSegment( $"回声洞库共有 {tableCount} 条信息！" )
+                                           ]
+                                          );
+                break;
+            }
 
             default : // argv not found
                 await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( "未找到指定的参数！" ) ] );
