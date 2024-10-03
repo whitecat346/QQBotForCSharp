@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace QQBotForCSharp
 {
-    public class SegmentMessage
+    public partial class SegmentMessage
     {
         public static string GetJObject( string input )
         {
@@ -18,23 +18,24 @@ namespace QQBotForCSharp
             JObject dataJObject = new();
             foreach (string part in parts)
             {
-                if (part.Contains("="))
-                {
-                    var keyValue = part.Split( '=' );
-                    dataJObject [ keyValue [0].Trim() ] = keyValue [1].Trim();
-                }
+                if ( !part.Contains( $"=" ) ) { continue; }
+
+                var keyValue = part.Split( '=' );
+                dataJObject [keyValue [0].Trim()] = keyValue [1].Trim();
             }
 
             tempJObject ["data"] = dataJObject;
             return tempJObject.ToString();
         }
 
+        [GeneratedRegex( @"\[CQ:([a-zA-Z0-9_]+[^\s](,[a-zA-Z0-9_]+=[^\s]+)*)\]", RegexOptions.IgnoreCase, "en-US" )]
+        private static partial Regex CqCodeRegex();
+
         public static bool IsCqCode( string input )
         {
             // [CQ:at,qq=2710458198]
-            const string CqCodePattern = @"\[CQ:([a-zA-Z0-9_]+[^\s](,[a-zA-Z0-9_]+=[^\s]+)*)\]";
 
-            return Regex.IsMatch(input, CqCodePattern);
+            return CqCodeRegex().IsMatch( input );
         }
 
     }

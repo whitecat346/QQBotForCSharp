@@ -11,10 +11,13 @@
 
   <ItemGroup>
     <Compile Remove="BotException\**" />
+    <Compile Remove="MSIBuild\**" />
     <Compile Remove="新文件夹\**" />
     <EmbeddedResource Remove="BotException\**" />
+    <EmbeddedResource Remove="MSIBuild\**" />
     <EmbeddedResource Remove="新文件夹\**" />
     <None Remove="BotException\**" />
+    <None Remove="MSIBuild\**" />
     <None Remove="新文件夹\**" />
   </ItemGroup>
 
