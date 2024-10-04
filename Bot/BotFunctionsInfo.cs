@@ -11,7 +11,7 @@ namespace QQBotForCSharp.Bot
         public static readonly List<string> AllFunctionNameList =
         [
             "#echo", "#randImg", "#netRandImg", "#earthQuake", "#ban", "#unban", "#stopBot", "#enable", "#disable",
-            "#help", "#cave"
+            "#help", "#cave", "#mcver", "#exceptionTest"
         ];
     }
 }

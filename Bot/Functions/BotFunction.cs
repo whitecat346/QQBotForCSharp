@@ -20,17 +20,19 @@ public partial class BotFunctions
     {
         FuncPtrInfos = new Dictionary<string, FuncPtrInfo>
                        {
-                           { "#echo", new FuncPtrInfo { IsEnable       = true, Func = this.Echo } },
-                           { "#randImg", new FuncPtrInfo { IsEnable    = true, Func = this.RandomImage } },
-                           { "#netRandImg", new FuncPtrInfo { IsEnable = true, Func = this.GetImgInternet } },
-                           { "#earthQuake", new FuncPtrInfo { IsEnable = true, Func = this.GetLatestEarthQuake } },
-                           { "#ban", new FuncPtrInfo { IsEnable        = true, Func = this.Ban } },
-                           { "#help", new FuncPtrInfo { IsEnable       = true, Func = this.Help } },
-                           { "#unban", new FuncPtrInfo { IsEnable      = true, Func = this.UnBan } },
-                           { "#stopBot", new FuncPtrInfo { IsEnable    = true, Func = this.StopBot } },
-                           { "#enable", new FuncPtrInfo { IsEnable     = true, Func = this.Enable } },
-                           { "#disable", new FuncPtrInfo { IsEnable    = true, Func = this.Disable } },
-                           { "#cave", new FuncPtrInfo { IsEnable       = true, Func = this.Cave } },
+                           { "#echo", new FuncPtrInfo { IsEnable          = true, Func = this.Echo } },
+                           { "#randImg", new FuncPtrInfo { IsEnable       = true, Func = this.RandomImage } },
+                           { "#netRandImg", new FuncPtrInfo { IsEnable    = true, Func = this.GetImgInternet } },
+                           { "#earthQuake", new FuncPtrInfo { IsEnable    = true, Func = this.GetLatestEarthQuake } },
+                           { "#ban", new FuncPtrInfo { IsEnable           = true, Func = this.Ban } },
+                           { "#help", new FuncPtrInfo { IsEnable          = true, Func = this.Help } },
+                           { "#unban", new FuncPtrInfo { IsEnable         = true, Func = this.UnBan } },
+                           { "#stopBot", new FuncPtrInfo { IsEnable       = true, Func = this.StopBot } },
+                           { "#enable", new FuncPtrInfo { IsEnable        = true, Func = this.Enable } },
+                           { "#disable", new FuncPtrInfo { IsEnable       = true, Func = this.Disable } },
+                           { "#cave", new FuncPtrInfo { IsEnable          = true, Func = this.Cave } },
+                           { "#mcver", new FuncPtrInfo { IsEnable         = true, Func = this.McVersion } },
+                           { "#exceptionTest", new FuncPtrInfo { IsEnable = true, Func = this.ExceptionTest } }
                        };
     }
 

@@ -45,6 +45,8 @@ public partial class BotFunctions
     {
         if ( msg.Length == 1 )
         {
+            if ( Program.CaveDb == null ) { throw new Exception( "CaveDb is null!" ); }
+
             var tableCount = Program.CaveDb.Cave.Count();
             var caveAt     = Random.Shared.Next( 0, tableCount );
 
@@ -59,6 +61,7 @@ public partial class BotFunctions
                            """;
 
             await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
+
             return;
 
             //case 2 : // form error
@@ -99,14 +102,19 @@ public partial class BotFunctions
                                               );
                 }
 
-                await Program.CaveDb.Cave.AddAsync( new CaveDbStruct
-                                                    {
-                                                        Context = contextInfo,
-                                                        Sender  = eventArgs.Sender.NickName,
-                                                        ID      = Program.CaveDb.Cave.Count()
-                                                    }
-                                                  );
-                await Program.CaveDb.SaveChangesAsync();
+                if ( Program.CaveDb != null )
+                {
+                    await Program.CaveDb.Cave.AddAsync( new CaveDbStruct
+                                                        {
+                                                            Context = contextInfo,
+                                                            Sender  = eventArgs.Sender.NickName,
+                                                            ID      = Program.CaveDb.Cave.Count()
+                                                        }
+                                                      );
+                    await Program.CaveDb.SaveChangesAsync();
+                }
+                else throw new Exception( "CaveDb is null!" );
+
                 await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 已添加至回声洞数据库!" ) ]
                                           );
                 break;
@@ -127,7 +135,7 @@ public partial class BotFunctions
                 var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdResult ) ) // not a number
                 {
-                    if ( caveIdResult >= Program.CaveDb.Cave.Count() ) // out of range
+                    if ( Program.CaveDb != null && caveIdResult >= Program.CaveDb.Cave.Count() ) // out of range
                     {
                         await eventArgs.ReplyAsync( [
                                                        new AtSegment( eventArgs.UserId ),
@@ -137,9 +145,9 @@ public partial class BotFunctions
                         return;
                     }
 
-                    var waitToRemove = Program.CaveDb.Cave.Single( c => c.ID == caveIdResult );
-                    Program.CaveDb.Cave.Remove( waitToRemove );
-                    await Program.CaveDb.SaveChangesAsync();
+                    var waitToRemove = Program.CaveDb?.Cave.Single( c => c.ID == caveIdResult );
+                    Program.CaveDb?.Cave.Remove( waitToRemove );
+                    await Program.CaveDb?.SaveChangesAsync()!;
                     await eventArgs.ReplyAsync( [
                                                    new AtSegment( eventArgs.UserId ), new TextSegment( " 已从回声洞数据库中删除!" )
                                                ]
@@ -167,7 +175,7 @@ public partial class BotFunctions
                 var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdInt ) ) // not a number
                 {
-                    if ( caveIdInt >= Program.CaveDb.Cave.Count() ) // out of range
+                    if ( Program.CaveDb != null && caveIdInt >= Program.CaveDb.Cave.Count() ) // out of range
                     {
                         await eventArgs.ReplyAsync( [
                                                        new AtSegment( eventArgs.UserId ),
@@ -177,13 +185,13 @@ public partial class BotFunctions
                         return;
                     }
 
-                    var caveInfo = Program.CaveDb.Cave.Single( cave => cave.ID == caveIdInt );
+                    var caveInfo = Program.CaveDb?.Cave.Single( cave => cave.ID == caveIdInt );
                     var caveStr = $"""
                                    盗版回声洞({caveIdInt}):
 
-                                   {caveInfo.Context}
+                                   {caveInfo?.Context}
 
-                                   -- {caveInfo.Sender}
+                                   -- {caveInfo?.Sender}
                                    """;
 
                     await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
@@ -204,12 +212,17 @@ public partial class BotFunctions
                     return;
                 }
 
-                var tableCount = Program.CaveDb.Cave.Count();
-                await eventArgs.ReplyAsync( [
-                                               new AtSegment( eventArgs.UserId ),
-                                               new TextSegment( $"回声洞库共有 {tableCount} 条信息！" )
-                                           ]
-                                          );
+                if ( Program.CaveDb != null )
+                {
+                    var tableCount = Program.CaveDb.Cave.Count();
+                    await eventArgs.ReplyAsync( [
+                                                   new AtSegment( eventArgs.UserId ),
+                                                   new TextSegment( $"回声洞库共有 {tableCount} 条信息！" )
+                                               ]
+                                              );
+                }
+                else throw new Exception( "CaveDb is null" );
+
                 break;
             }
 

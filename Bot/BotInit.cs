@@ -15,29 +15,28 @@ public static class BotInit
 
     public static void GroupManagerInit()
     {
-        if ( File.Exists( "groupManager.json" ) )
+        if ( !File.Exists( "groupManager.json" ) ) { return; }
+
+        var groupManager = JArray.Parse( File.ReadAllText( "groupManager.json" ) );
+        foreach ( var valuePair in groupManager )
         {
-            var groupManager = JArray.Parse( File.ReadAllText( "groupManager.json" ) );
-            foreach ( var valuePair in groupManager )
+            var     tempBotFunctions = new BotFunctions();
+            JObject info             = (JObject)valuePair;
+            JObject funcInfo         = (JObject)( info ["funcInfo"] ?? throw new InvalidOperationException() );
+            long    groupId          = (long)( info ["groupId"] ?? throw new InvalidOperationException() );
+
+            foreach ( string funcName in BotFunctionsInfo.AllFunctionNameList )
             {
-                var     tempBotFunctions = new BotFunctions();
-                JObject info             = (JObject)valuePair;
-                JObject funcInfo         = (JObject)info ["funcInfo"];
-                long    groupId          = (long)info ["groupId"];
-
-                foreach ( string funcName in BotFunctionsInfo.AllFunctionNameList )
-                {
-                    if ( funcInfo.TryGetValue( funcName, out var funcInfoValue ) )
-                        tempBotFunctions.SetFuncState( funcName, (bool)funcInfoValue );
-                    else
-                        throw new Exception( "未找到该功能!" );
-                }
-
-                GroupBotFunctions.Add( groupId, tempBotFunctions );
+                if ( funcInfo.TryGetValue( funcName, out var funcInfoValue ) )
+                    tempBotFunctions.SetFuncState( funcName, (bool)funcInfoValue );
+                else
+                    throw new Exception( "未找到该功能!" );
             }
 
-            Console.WriteLine( "Loaded!" );
+            GroupBotFunctions.Add( groupId, tempBotFunctions );
         }
+
+        Console.WriteLine( "Loaded!" );
     }
 
     public static async Task InitBot()

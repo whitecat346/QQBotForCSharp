@@ -28,7 +28,7 @@ namespace QQBotForCSharp
 
         #endregion
 
-        public static async void OnGroupMessage( object? sender, GroupMessageEventArgs e )
+        public static void OnGroupMessage( object? sender, GroupMessageEventArgs e )
         {
             var tempMsg = e.Message.ToString();
 
