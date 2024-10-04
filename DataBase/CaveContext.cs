@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.JavaScript;
 using Microsoft.EntityFrameworkCore;
 using QQBotForCSharp.DataBase.Context;
 
@@ -18,8 +19,18 @@ public partial class CaveContext : DbContext
     {
     }
 
-    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder ) =>
-        optionsBuilder.UseSqlite( "Filename=G:\\QQBotForCSharp\\Cave.db" );
+    protected override void OnConfiguring( DbContextOptionsBuilder optionsBuilder )
+    {
+#if DEBUG
+        Console.WriteLine( "Loading Cave Data Base..." );
+        Console.WriteLine( $"{Config.CaveDbPath}" );
+
+        var dbPath = new string( $"Filename={Config.CaveDbPath}" );
+        optionsBuilder.UseSqlite( dbPath );
+#else
+        optionsBuilder.UseSqlite( $"Filename={Config.CaveDbPath}" );
+#endif
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

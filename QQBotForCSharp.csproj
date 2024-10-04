@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="resources\botConfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Makabaka" Version="1.2.1.2" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
@@ -45,7 +49,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="resources\" />
+    <Resource Include="bin\Debug\net8.0\botConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="bin\Release\net8.0\botConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="resources\botConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

@@ -30,7 +30,7 @@ public partial class BotFunctions
                            { "#stopBot", new FuncPtrInfo { IsEnable    = true, Func = this.StopBot } },
                            { "#enable", new FuncPtrInfo { IsEnable     = true, Func = this.Enable } },
                            { "#disable", new FuncPtrInfo { IsEnable    = true, Func = this.Disable } },
-                           { "#cave", new FuncPtrInfo { IsEnable       = true, Func = this.Cave } }
+                           { "#cave", new FuncPtrInfo { IsEnable       = true, Func = this.Cave } },
                        };
     }
 

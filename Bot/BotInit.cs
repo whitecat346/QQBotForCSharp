@@ -28,13 +28,9 @@ public static class BotInit
                 foreach ( string funcName in BotFunctionsInfo.AllFunctionNameList )
                 {
                     if ( funcInfo.TryGetValue( funcName, out var funcInfoValue ) )
-                    {
                         tempBotFunctions.SetFuncState( funcName, (bool)funcInfoValue );
-                    }
                     else
-                    {
                         throw new Exception( "未找到该功能!" );
-                    }
                 }
 
                 GroupBotFunctions.Add( groupId, tempBotFunctions );
@@ -71,8 +67,8 @@ public static class BotInit
         Program.Service.OnGroupMemberIncrease += QqBotMessage.OnGroupMemberIncrease;
 
         var cts = new CancellationTokenSource();
-        AssemblyLoadContext.Default.Unloading += ctx => cts.Cancel();
-        Console.CancelKeyPress                += ( sender, eventArgs ) => cts.Cancel();
+        AssemblyLoadContext.Default.Unloading += _ => cts.Cancel();
+        Console.CancelKeyPress                += ( _, _ ) => cts.Cancel();
 
 
         GroupManagerInit();

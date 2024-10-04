@@ -15,24 +15,26 @@ public partial class BotFunctions
 
     public async void Cave( string [ ] msg, GroupMessageEventArgs eventArgs )
     {
-        if ( msg.Length != 1 && msg [1] == "del" || msg [1] == "count" )
+        if ( msg.Length != 1 )
         {
-            await GetCave( msg, eventArgs );
-        }
-        else
-        {
-            if ( _timer.Enabled )
+            // if parma is speacial command
+            if ( msg [1] == "del" || msg [1] == "count" )
             {
-#if DEBUG
-                await eventArgs.ReplyAsync( new TextSegment( "Cave冷却中，请稍后再试！" ) );
-#endif
-                return;
+                await GetCave( msg, eventArgs );
             }
-            else await GetCave( msg, eventArgs );
         }
 
+        if ( _timer.Enabled )
+        {
+#if DEBUG
+            await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " Cave冷却中，请稍后再试！" ) ] );
+#endif
+            return;
+        }
+        else await GetCave( msg, eventArgs );
+
         _timer.Enabled = true;
-        _timer.Elapsed += ( sender, e ) =>
+        _timer.Elapsed += ( _, _ ) =>
                           {
                               _timer.Enabled = false;
                           };
@@ -68,6 +70,8 @@ public partial class BotFunctions
 
         switch ( msg [1] )
         {
+            #region AddFunction
+
             case "add" :
             {
                 if ( msg.Length < 3 )
@@ -108,6 +112,10 @@ public partial class BotFunctions
                 break;
             }
 
+            #endregion
+
+            #region DelFunction
+
             case "del" :
             {
                 if ( msg.Length < 3 )
@@ -145,6 +153,10 @@ public partial class BotFunctions
                 break;
             }
 
+            #endregion
+
+            #region AtFunction
+
             case "at" :
             {
                 if ( msg.Length < 3 )
@@ -180,6 +192,10 @@ public partial class BotFunctions
                 break;
             }
 
+            #endregion
+
+            #region CountFunction
+
             case "count" :
             {
                 if ( msg.Length > 2 )
@@ -197,10 +213,11 @@ public partial class BotFunctions
                 break;
             }
 
+            #endregion
+
             default : // argv not found
                 await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( "未找到指定的参数！" ) ] );
                 break;
         }
     }
 }
-
