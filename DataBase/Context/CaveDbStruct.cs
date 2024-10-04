@@ -15,7 +15,7 @@ namespace QQBotForCSharp.DataBase.Context
         [Key]
         [Required]
         [Column( TypeName = "INTEGER" )]
-        public required long ID { get; set; }
+        public required int? ID { get; set; }
 
         [Required]
         [Column( TypeName = "TEXT" )]

@@ -18,9 +18,10 @@ public partial class BotFunctions
         if ( msg.Length != 1 )
         {
             // if parma is speacial command
-            if ( msg [1] == "del" || msg [1] == "count" )
+            if ( msg [1] is "del" or "count" or "edit" )
             {
                 await GetCave( msg, eventArgs );
+                goto setTimer;
             }
         }
 
@@ -32,6 +33,8 @@ public partial class BotFunctions
             return;
         }
         else await GetCave( msg, eventArgs );
+
+    setTimer:
 
         _timer.Enabled = true;
         _timer.Elapsed += ( _, _ ) =>
@@ -49,9 +52,7 @@ public partial class BotFunctions
 
             var tableCount = Program.CaveDb.Cave.Count();
             var caveAt     = Random.Shared.Next( 0, tableCount );
-
-            var caveInfo = Program.CaveDb.Cave.Single( cave => cave.ID == caveAt );
-
+            var caveInfo   = Program.CaveDb.Cave.Single( cave => cave.ID == caveAt );
             var caveStr = $"""
                            盗版回声洞({caveAt}):
 
@@ -83,40 +84,12 @@ public partial class BotFunctions
                     return;
                 }
 
-                var contextInfo = MakeCaveContext( msg.Skip( 2 ).ToArray() );
-                if ( SegmentMessage.IsCqCode( contextInfo ) )
-                {
-                    await eventArgs.ReplyAsync( [
-                                                   new AtSegment( eventArgs.UserId ),
-                                                   new TextSegment( " 禁止使用 CQ 代码形式的消息（图片，视频等）! "
-                                                                  ) // cq code not alloud
-                                               ]
-                                              );
-                    return;
-                }
+                string contextInfo = MakeCaveContext( msg.Skip( 2 ).ToArray() );
 
-                if ( contextInfo == string.Empty )
-                {
-                    // context is empty
-                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 内容不能为空！" ) ]
-                                              );
-                }
+                var replyMsg = CaveFunciton.Add( contextInfo, eventArgs.Sender.NickName );
 
-                if ( Program.CaveDb != null )
-                {
-                    await Program.CaveDb.Cave.AddAsync( new CaveDbStruct
-                                                        {
-                                                            Context = contextInfo,
-                                                            Sender  = eventArgs.Sender.NickName,
-                                                            ID      = Program.CaveDb.Cave.Count()
-                                                        }
-                                                      );
-                    await Program.CaveDb.SaveChangesAsync();
-                }
-                else throw new Exception( "CaveDb is null!" );
+                await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( replyMsg ) ] );
 
-                await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 已添加至回声洞数据库!" ) ]
-                                          );
                 break;
             }
 
@@ -135,23 +108,9 @@ public partial class BotFunctions
                 var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdResult ) ) // not a number
                 {
-                    if ( Program.CaveDb != null && caveIdResult >= Program.CaveDb.Cave.Count() ) // out of range
-                    {
-                        await eventArgs.ReplyAsync( [
-                                                       new AtSegment( eventArgs.UserId ),
-                                                       new TextSegment( " 输入的ID不合法，请重新输入！" )
-                                                   ]
-                                                  );
-                        return;
-                    }
+                    var replyMsg = CaveFunciton.Delete( caveIdResult );
 
-                    var waitToRemove = Program.CaveDb?.Cave.Single( c => c.ID == caveIdResult );
-                    Program.CaveDb?.Cave.Remove( waitToRemove );
-                    await Program.CaveDb?.SaveChangesAsync()!;
-                    await eventArgs.ReplyAsync( [
-                                                   new AtSegment( eventArgs.UserId ), new TextSegment( " 已从回声洞数据库中删除!" )
-                                               ]
-                                              );
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( replyMsg ) ] );
                 }
                 else
                 {
@@ -175,26 +134,9 @@ public partial class BotFunctions
                 var caveId = msg [2];
                 if ( int.TryParse( caveId, out int caveIdInt ) ) // not a number
                 {
-                    if ( Program.CaveDb != null && caveIdInt >= Program.CaveDb.Cave.Count() ) // out of range
-                    {
-                        await eventArgs.ReplyAsync( [
-                                                       new AtSegment( eventArgs.UserId ),
-                                                       new TextSegment( " 输入的ID不合法，请重新输入！" )
-                                                   ]
-                                                  );
-                        return;
-                    }
+                    var replyMsg = CaveFunciton.At( caveIdInt );
 
-                    var caveInfo = Program.CaveDb?.Cave.Single( cave => cave.ID == caveIdInt );
-                    var caveStr = $"""
-                                   盗版回声洞({caveIdInt}):
-
-                                   {caveInfo?.Context}
-
-                                   -- {caveInfo?.Sender}
-                                   """;
-
-                    await eventArgs.ReplyAsync( new TextSegment( caveStr ) );
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( replyMsg ) ] );
                 }
 
                 break;
@@ -212,16 +154,51 @@ public partial class BotFunctions
                     return;
                 }
 
-                if ( Program.CaveDb != null )
+                var replyMsg = CaveFunciton.Count();
+
+                await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( replyMsg ) ] );
+
+                break;
+            }
+
+            #endregion
+
+            #region EditFunction
+
+            case "edit" :
+            {
+                if ( eventArgs.UserId != 2710458198 )
                 {
-                    var tableCount = Program.CaveDb.Cave.Count();
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 非所有者禁止使用!" ) ]
+                                              );
+                    return;
+                }
+                // 0     1    2 3      4       5     6
+                // #cave edit 0 sender context hello wrold
+
+                if ( msg.Length < 5 )
+                {
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 参数不足!" ) ] );
+                    return;
+                }
+
+                if ( int.TryParse( msg [2], out int result ) )
+                {
+                    var sender  = msg [3];
+                    var context = msg.Skip( 4 ).Aggregate( string.Empty, ( s, s1 ) => s + ( s1 + ' ' ) );
+
+                    var response = CaveFunciton.Edit( result, context, sender );
+                    await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( response ) ] );
+                }
+                else
+                {
                     await eventArgs.ReplyAsync( [
                                                    new AtSegment( eventArgs.UserId ),
-                                                   new TextSegment( $"回声洞库共有 {tableCount} 条信息！" )
+                                                   new TextSegment( " 输入的ID不合法，请重新输入！" )
                                                ]
                                               );
+                    return;
                 }
-                else throw new Exception( "CaveDb is null" );
 
                 break;
             }

@@ -20,7 +20,7 @@ namespace QQBotForCSharp.Functions
                 return;
             }
 
-            var tempMsg = msg.Skip( 1 ).Aggregate( string.Empty, ( current, s ) => current + ( " " + s ) );
+            var tempMsg = msg.Skip( 1 ).Aggregate( string.Empty, ( current, s ) => current + ( s + ' ' ) );
 
             await eventArgs.ReplyAsync( new TextSegment( tempMsg.Remove( 0, 1 ) ) );
         }
