@@ -10,6 +10,46 @@ namespace QQBotForCSharp.Functions
 
         public async void Llm( string [ ] msg, GroupMessageEventArgs eventArgs )
         {
+            if ( msg.Length != 1 )
+            {
+                switch ( msg [1] )
+                {
+                    case "context" when msg.Length > 2 :
+                        await eventArgs.ReplyAsync( [ new AtSegment( eventArgs.UserId ), new TextSegment( " 多余的参数!" ) ]
+                                                  );
+                        return;
+                    case "context" when _context == null :
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " 没有任何上下文记录!" )
+                                                   ]
+                                                  );
+                        return;
+                    case "context" :
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " 当前上下文条数:" + _context.Count.ToString() )
+                                                   ]
+                                                  );
+                        return;
+                    case "clear" when eventArgs.UserId != 2710458198 :
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " 非所有者禁止使用！" )
+                                                   ]
+                                                  );
+                        return;
+                    case "clear" :
+                        _context = null;
+                        await eventArgs.ReplyAsync( [
+                                                       new AtSegment( eventArgs.UserId ),
+                                                       new TextSegment( " Context 已清空！" )
+                                                   ]
+                                                  );
+                        return;
+                }
+            }
+
             var sendMessage = msg.Skip( 1 ).Aggregate( string.Empty, ( current, s ) => current + ( s + ' ' ) );
             var ollama      = new OllamaApiClient();
 
@@ -20,11 +60,6 @@ namespace QQBotForCSharp.Functions
                                                                              );
 
             _context = enumerable.Context;
-
-            if ( _context is { Count: > 50 } )
-            {
-                _context.RemoveAt( 0 );
-            }
 
             await eventArgs.ReplyAsync( new TextSegment( enumerable.Response ) );
         }

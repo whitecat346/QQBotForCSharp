@@ -22,7 +22,8 @@ namespace QQBotForCSharp.Functions
                 { "#enable", "启用指定功能 " },
                 { "#disable", "禁用指定功能 " },
                 { "#mcver", "获取当前MC最新版本" },
-                { "#exceptionTest", "测试Bot异常报告" }
+                { "#exceptionTest", "测试Bot异常报告" },
+                { "#chat", "AI聊天功能" }
             };
 
         #endregion
