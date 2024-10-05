@@ -32,7 +32,8 @@ public partial class BotFunctions
                            { "#disable", new FuncPtrInfo { IsEnable       = true, Func = this.Disable } },
                            { "#cave", new FuncPtrInfo { IsEnable          = true, Func = this.Cave } },
                            { "#mcver", new FuncPtrInfo { IsEnable         = true, Func = this.McVersion } },
-                           { "#exceptionTest", new FuncPtrInfo { IsEnable = true, Func = this.ExceptionTest } }
+                           { "#exceptionTest", new FuncPtrInfo { IsEnable = true, Func = this.ExceptionTest } },
+                           { "#chat", new FuncPtrInfo { IsEnable          = true, Func = this.Llm } }
                        };
     }
 

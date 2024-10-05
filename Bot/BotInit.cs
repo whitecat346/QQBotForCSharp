@@ -3,7 +3,6 @@ using Makabaka.Configurations;
 using Makabaka.Services;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using QQBotForCSharp.Bot;
 using QQBotForCSharp.Functions;
 using Serilog;
 
